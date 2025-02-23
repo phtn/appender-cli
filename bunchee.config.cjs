@@ -1,6 +1,6 @@
 export default {
   input: "./src/index.ts",
   output: "./build",
-  format: ["cjs", "esm"],
+  format: ["js", "cjs", "esm"],
   sourcemap: true,
 };

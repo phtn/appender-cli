@@ -1,13 +1,14 @@
 {
-  "name": "appender-cli",
-  "version": "0.1.3",
-  "module": "build/index.js",
-  "main": "build/index.mjs",
-  "types": "build/index.d.ts",
+  "name": "appender",
+  "version": "0.1.32",
+  "module": "./build/index.mjs",
+  "main": "./build/index.cjs",
+  "types": "./build/index.d.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun run build/index.mjs",
-    "build": "bunchee --config ./bunchee.config.mjs"
+    "dev": "bun run ./build/index.mjs",
+    "build": "bunchee --config bunchee.config.cjs",
+    "install": "bun install -g ./build/index.cjs"
   },
   "devDependencies": {
     "@types/bun": "latest",
@@ -39,6 +40,6 @@
     "build": "build"
   },
   "bin": {
-    "addison": "./build/index.cjs"
+    "appender": "./build/index.cjs"
   }
 }

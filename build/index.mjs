@@ -46,7 +46,7 @@ function insertWithin(content, new_lines) {
         return content + "\n" + new_lines.join("\n");
     }
     const lines = new_lines.map((line)=>{
-        const [label, raw_content] = line.split("::");
+        const [label, raw_content] = line.replaceAll("#888888", "currentColor").split("::");
         const content = raw_content.substring(raw_content.indexOf("><p") + 1, raw_content.indexOf("</svg>"));
         return {
             label,
