@@ -1,0 +1,19 @@
+interface IconListItem {
+  set: string;
+  symbol: string;
+  name: string;
+}
+const icons = [
+  {
+    set: "Hugeicons",
+    symbol: `<path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 11c0-3.75 0-5.625.955-6.939A5 5 0 0 1 5.06 2.955C6.375 2 8.251 2 12 2s5.625 0 6.939.955a5 5 0 0 1 1.106 1.106C21 5.375 21 7.251 21 11v2c0 3.75 0 5.625-.955 6.939a5 5 0 0 1-1.106 1.106C17.625 22 15.749 22 12 22s-5.625 0-6.939-.955a5 5 0 0 1-1.106-1.106C3 18.625 3 16.749 3 13zm14-4H9m8 5h-3" color="currentColor"></path>`,
+    name: "AlignBoxTopRight",
+    viewBox: "0 0 24 24",
+  },
+  {
+    set: "Hugeicons",
+    symbol: `<g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" color="currentColor"><path d="M10.201 20c1.146 1.245 2.651 2 4.3 2c3.59 0 6.5-3.582 6.5-8s-2.91-8-6.5-8C11.186 6 8.4 9.054 8 13"></path><path d="M12 21.387A5.45 5.45 0 0 1 9.5 22C5.91 22 3 18.418 3 14s2.91-8 6.5-8c.886 0 1.73.218 2.5.613M12 6c0-1.333.6-4 3-4"></path></g>`,
+    name: "Apricot",
+    viewBox: "0 0 24 24",
+  },
+];

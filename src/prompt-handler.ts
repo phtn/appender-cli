@@ -11,10 +11,12 @@ export async function getValidFilePath(state: State) {
         src: {
           message: "source file: ",
           required: true,
+          default: "pair/source.txt",
         },
         des: {
           message: "destination file: ",
           required: true,
+          default: "pair/destination.ts",
         },
       },
     };

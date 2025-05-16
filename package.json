@@ -1,24 +1,23 @@
 {
   "name": "appender",
-  "version": "0.1.32",
+  "version": "0.1.36",
   "module": "./build/index.mjs",
   "main": "./build/index.cjs",
   "types": "./build/index.d.ts",
   "type": "module",
   "scripts": {
     "dev": "bun run ./build/index.mjs",
-    "build": "bunchee --config bunchee.config.cjs",
-    "install": "bun install -g ./build/index.cjs"
+    "build": "bunchee --config bunchee.config.cjs"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "bunchee": "^6.3.3"
+    "bunchee": "^6.4.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.3.1",
+    "@inquirer/prompts": "^7.3.3",
     "chalk": "^5.4.1",
     "commander": "^13.1.0",
     "ora": "^8.2.0"
@@ -37,9 +36,9 @@
     "build"
   ],
   "directories": {
-    "build": "build"
+    "build": "./build"
   },
   "bin": {
-    "appender": "./build/index.cjs"
+    "svg": "./build/index.cjs"
   }
 }

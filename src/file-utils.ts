@@ -36,35 +36,19 @@ export function validatePath(path: string) {
 }
 
 export function insertWithin(content: string, new_lines: string[]) {
-  const lastBraceIndex = content.lastIndexOf(",");
+  const lastBraceIndex = content.trim().lastIndexOf("}");
 
-  if (lastBraceIndex === -1) {
-    return content + "\n" + new_lines.join("\n");
-  }
-
-  const lines = new_lines.map((line) => {
-    const [label, raw_content] = line
-      .replaceAll("#888888", "currentColor")
-      .split("::");
-    const content = raw_content.substring(
-      raw_content.indexOf("><p") + 1,
-      raw_content.indexOf("</svg>"),
-    );
-    return {
-      label,
-      content,
-    };
-  });
+  const lines = createNewLines(new_lines);
 
   const createInsert = (items: LineItem[]): string => {
     const formattedItems = items
       .map(
         (item) =>
-          `\n\t${item.label}: {\n\t\tcontent: createContent(\`${item.content}\`),\n\t}`,
+          `${lastBraceIndex === 1 ? "," : ""}\n\t${item.name}: {\n\t\tsymbol: \`${item.symbol}\`,\n\t\tviewBox: \`${item.viewBox}\`,\n\t\tset: \`${item.set}\`,\n\t}${new_lines.length > 1 ? "" : ","}`,
       )
       .join(",");
 
-    return `${content.slice(0, lastBraceIndex)},${formattedItems}${content.slice(lastBraceIndex)}`;
+    return `${content.slice(0, lastBraceIndex)}${formattedItems}${content.slice(lastBraceIndex)}`;
   };
 
   return createInsert(lines);
@@ -94,20 +78,43 @@ export const handleCreateFile = (
   }
 };
 
-/*
-const createInsert = (items: LineItem[]) =>
-    content.slice(0, lastBraceIndex) +
-    "," +
-    items.map((item) => {
-      const line =
-        "\n\t" +
-        item.label +
-        ": {\n\t\tcontent: " +
-        "`" +
-        item.content +
-        "`" +
-        "\n\t}";
-      return line;
-    }) +
-    content.slice(lastBraceIndex);
-*/
+export const transformSvgAttributes = (svg: string): string => {
+  let transformed = svg;
+  transformed = transformed.replace(/stroke-linecap/g, "strokeLinecap");
+  transformed = transformed.replace(/stroke-linejoin/g, "strokeLinejoin");
+  transformed = transformed.replace(/stroke-width/g, "strokeWidth");
+  return transformed;
+};
+
+const createNewLines = (lines: string[]) =>
+  lines.map((line) => {
+    if (line.trim().startsWith("<symbol")) {
+      const viewBoxMatch = line.match(/viewBox="([^"]*)"/);
+      const idMatch = line.match(/id="([^"]*)"/);
+
+      if (viewBoxMatch && idMatch) {
+        const viewBox = viewBoxMatch[1];
+        const id = idMatch[1];
+        const parts = id.split("-");
+        const set = parts[0];
+        const name =
+          parts.length > 1
+            ? parts.length > 2
+              ? `"${parts.slice(1).join("-")}"`
+              : parts[1]
+            : undefined;
+
+        const symbolContentMatch = line.match(/<symbol.*?>(.*?)<\/symbol>/);
+        let symbol = "";
+        if (symbolContentMatch) {
+          symbol = symbolContentMatch[1].trim();
+        }
+
+        symbol = symbol.substring(symbol.indexOf("->") + 2);
+        symbol = symbol.replaceAll("#888888", "currentColor");
+        symbol = symbol.replaceAll('="1.5"', '="1"');
+
+        return { set, symbol, name, viewBox };
+      }
+    }
+  }) as LineItem[];

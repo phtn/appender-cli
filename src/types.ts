@@ -10,6 +10,8 @@ export interface FilePath {
 }
 
 export interface LineItem {
-  label: string;
-  content: string;
+  set: string;
+  symbol: string;
+  name: string;
+  viewBox: string;
 }

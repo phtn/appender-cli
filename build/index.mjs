@@ -41,24 +41,41 @@ function validatePath(path) {
     };
 }
 function insertWithin(content, new_lines) {
-    const lastBraceIndex = content.lastIndexOf(",");
-    if (lastBraceIndex === -1) {
-        return content + "\n" + new_lines.join("\n");
-    }
-    const lines = new_lines.map((line)=>{
-        const [label, raw_content] = line.replaceAll("#888888", "currentColor").split("::");
-        const content = raw_content.substring(raw_content.indexOf("><p") + 1, raw_content.indexOf("</svg>"));
-        return {
-            label,
-            content
-        };
-    });
+    const lastBraceIndex = content.trim().lastIndexOf("}");
+    const lines = createNewLines(new_lines);
     const createInsert = (items)=>{
-        const formattedItems = items.map((item)=>`\n\t${item.label}: {\n\t\tcontent: createContent(\`${item.content}\`),\n\t}`).join(",");
-        return `${content.slice(0, lastBraceIndex)},${formattedItems}${content.slice(lastBraceIndex)}`;
+        const formattedItems = items.map((item)=>`${lastBraceIndex === 1 ? "," : ""}\n\t${item.name}: {\n\t\tsymbol: \`${item.symbol}\`,\n\t\tviewBox: \`${item.viewBox}\`,\n\t\tset: \`${item.set}\`,\n\t}${new_lines.length > 1 ? "" : ","}`).join(",");
+        return `${content.slice(0, lastBraceIndex)}${formattedItems}${content.slice(lastBraceIndex)}`;
     };
     return createInsert(lines);
 }
+const createNewLines = (lines)=>lines.map((line)=>{
+        if (line.trim().startsWith("<symbol")) {
+            const viewBoxMatch = line.match(/viewBox="([^"]*)"/);
+            const idMatch = line.match(/id="([^"]*)"/);
+            if (viewBoxMatch && idMatch) {
+                const viewBox = viewBoxMatch[1];
+                const id = idMatch[1];
+                const parts = id.split("-");
+                const set = parts[0];
+                const name = parts.length > 1 ? parts.length > 2 ? `"${parts.slice(1).join("-")}"` : parts[1] : undefined;
+                const symbolContentMatch = line.match(/<symbol.*?>(.*?)<\/symbol>/);
+                let symbol = "";
+                if (symbolContentMatch) {
+                    symbol = symbolContentMatch[1].trim();
+                }
+                symbol = symbol.substring(symbol.indexOf("->") + 2);
+                symbol = symbol.replaceAll("#888888", "currentColor");
+                symbol = symbol.replaceAll('="1.5"', '="1"');
+                return {
+                    set,
+                    symbol,
+                    name,
+                    viewBox
+                };
+            }
+        }
+    });
 
 const watchFile = (src, des, last_content)=>{
     try {
@@ -112,11 +129,13 @@ async function getValidFilePath(state) {
             input: {
                 src: {
                     message: "source file: ",
-                    required: true
+                    required: true,
+                    default: "pair/source.txt"
                 },
                 des: {
                     message: "destination file: ",
-                    required: true
+                    required: true,
+                    default: "pair/destination.ts"
                 }
             }
         };
@@ -191,8 +210,12 @@ const icon = async ()=>{
     }
 };
 
+var version = "0.1.36";
+var pkg = {
+	version: version};
+
 const program = new Command();
-program.name("appender-cli").description("append texts at the bottom of the file.").version("0.1.2");
-program.command("version").alias("v").option("-V, --version", "-v").description("get cli version number").action(()=>console.log("appender-cli v0.1.1"));
+program.name("iconxsvg").description("append svg symbols to the bottom of the file.").version(`v${pkg.version}`);
+program.command("version").alias("v").option("-V, --version", "-v").description("get cli version number").action(()=>console.log(`iconxsvg v${pkg.version}`));
 program.command("icon").description("append svgs to list").action(icon);
-program.parse(); //const spinner = ora("yo let's go: ");
+program.parse();
